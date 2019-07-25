@@ -51,13 +51,15 @@ fn run() -> Result<(), pa::Error> {
         for _ in 0..frames {
             let samp = state[4];
 
-            let old_state = state.clone();
+            let mut next_state = [0.0; 5];
 
-            state[0] = modmod.step_and_sample((0.3, 300.0, 660.0));
-            state[1] = modulator.step_and_sample((old_state[0], 220.0, 440.0));
-            state[2] = sine_osc.step_and_sample((old_state[1], 1.0, 0.0));
-            state[3] = disto_mod.step_and_sample((2.3, 3.0, 3.2));
-            state[4] = output.step_and_sample((old_state[2], old_state[3]));
+            next_state[0] = modmod.step_and_sample((0.3, 300.0, 660.0));
+            next_state[1] = modulator.step_and_sample((state[0], 220.0, 440.0));
+            next_state[2] = sine_osc.step_and_sample((state[1], 1.0, 0.0));
+            next_state[3] = disto_mod.step_and_sample((2.3, 3.0, 3.2));
+            next_state[4] = output.step_and_sample((state[2], state[3]));
+
+            state = next_state;
 
             buffer[idx] = samp;
             buffer[idx + 1] = samp;
